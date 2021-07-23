@@ -1,0 +1,24 @@
+---
+title: "Lab1AnalisisPCA"
+author: "Ayleen Rubio 19003, Andrés Say 19705"
+date: "23/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_knit$set(root.dir="C:/Users/Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/")
+```
+
+# Laboratorio No. 1: Análisis exploratorio PCA y Apriori
+
+## Análisis Exploratorio
+A continuación se mostrará un resumen de cada una de las variables y el tipo 
+```{r analisis, echo=FALSE}
+datosCasas <- read.csv("train.csv")
+summary(datosCasas)
+str(datosCasas)
+table(unlist(lapply(datosCasas, class)))
+```
+
