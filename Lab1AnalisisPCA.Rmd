@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 knitr::opts_knit$set(root.dir="C:/Users/Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/")
+
+library(ggplot2)
 ```
 
 # Laboratorio No. 1: Análisis exploratorio PCA y Apriori
@@ -22,3 +24,389 @@ str(datosCasas)
 table(unlist(lapply(datosCasas, class)))
 ```
 
+Con esto puede observarse que, del total de variables con las que cuenta nuestra base de datos, 43 son de tipo character y 38 son de tipo integer, siendo una de ellas el id por lo que no será utilizado en el futuro para formar grupos. 
+
+De estas variables se ha considerado que algunas de ellas valen la pena estudiarlas más a fondo para conocer las condiciones de los datos con los que se llevará a cabo el entrenamiento y las pruebas.
+
+A continuación se explicará la distribución de las variables y su comportamiento:
+
+```{r grfBldngCss, echo=FALSE}
+barplot(datosCasas$LotArea, xlab= "Lote", ylab = "Metros cuadrados", main="Tamaño del lote en metros cuadrados")
+```
+
+En este caso, puede observarse que la mayoría de casas se encuentra debajo de los 50,ooo metros cuadrados y que la casa que cuenta con mayor área de lote cuenta con más de 200,000 metros cuadrados.
+
+```{r echo=FALSE}
+plot(x = datosCasas$LotArea, y= datosCasas$SalePrice, xlab= "Tamaño del lote", ylab= "Precio de venta", main = "Correlación entre tamaño del lote y precio de la casa")
+abline(lm(datosCasas$SalePrice ~ datosCasas$LotArea), col = "red")
+```
+
+Puede observarse que no existe correlación entre el precio de la casa y el tamaño del lote, esto ya que la mayoría de valores se encuentran antes de los 50,000 metros cuadrados y el precio de venta cambia alrededor de los mismos tamaños de lote, además, las casas a mayor precio se encuentran entre los tamaño de lote menores.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$YearBuilt)
+anio_construccion <-datosCasas$YearBuilt
+mostrar <- ggplot(data=df, aes(x=anio_construccion)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Año de construcción"))
+```
+
+En este gráfico puede observarse que los años en los que más hubo construcción de casas ha sido de 1990 a 2000
+
+```{r echo=FALSE}
+plot(x = datosCasas$YearBuilt, y= datosCasas$SalePrice, xlab= "Año de construccion", ylab= "Precio de venta", main = "Correlación entre precio de la casa y su año de construccion")
+abline(lm(datosCasas$SalePrice ~ datosCasas$YearBuilt), col = "red")
+```
+
+Como puede observarse, sí existe una correlación entre el año de construcción y el precio de la casa, ya que puede observarse cómo es que los valores de precio van aumentando a medida que los años van incrementando.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$TotalBsmtSF)
+metros_cuadrados_sotano <-datosCasas$TotalBsmtSF
+mostrar <- ggplot(data=df, aes(x=metros_cuadrados_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Metros cuadrados del sótano"))
+plot(x = datosCasas$TotalBsmtSF, y= datosCasas$SalePrice, xlab= "Total de metros cuadrados del sotano", ylab= "Precio de venta", main = "Correlación entre precio de venta y total de metros cuadrados del sotano")
+abline(lm(datosCasas$SalePrice ~ datosCasas$TotalBsmtSF), col = "red")
+```
+
+Según lo observado, a pesar que se cuente con lagunos puntos atipicos, sí existe una correlación entre el precio de venta y el total de metros cuadrados del area del sotano.
+En este caso, los puntos atípicos representan que hay casas que no cuentan con un sótano tan grande y que, sin embargo, el precio de estas es bastante elevado.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$X1stFlrSF)
+metros_cuadrados_primer_piso <- datosCasas$X1stFlrSF
+mostrar <- ggplot(data=df, aes(x=metros_cuadrados_primer_piso)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Metros cuadrados del primer piso"))
+plot(x = datosCasas$X1stFlrSF, y= datosCasas$SalePrice, xlab= "Total de mestros cuadrados del primer piso", ylab= "Precio de venta", main = "Correlación entre precio de venta y total de metros cuadrados \n del primer piso")
+abline(lm(datosCasas$SalePrice ~ datosCasas$X1stFlrSF), col = "red")
+```
+
+Puede observarse que sí existe correlación entre el total de metros cuadrados del primer piso y el precio de venta. En este caso los puntos atípicos que pueden observarse representan, al igual que con los metros cuadrados del sótano, existen casas que no cuentan con un primer piso tan grande y aún así tienen un precio elevado.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$X2ndFlrSF)
+metros_cuadrados_segundo_piso <- datosCasas$X2ndFlrSF
+mostrar <- ggplot(data=df, aes(x=metros_cuadrados_segundo_piso)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Metros cuadrados segundo piso"))
+plot(x = datosCasas$X2ndFlrSF, y= datosCasas$SalePrice, xlab= "Total de mestros cuadrados del segundo piso", ylab= "Precio de venta", main = "Correlación entre precio de venta y total de metros cuadrados \n del segundo piso")
+abline(lm(datosCasas$SalePrice ~ datosCasas$X2ndFlrSF), col = "red")
+```
+
+En este caso, los valores que cuentan con 0 metros cuadrados en el segundo piso hacen referencia a las casas que no cuentan con un segundo piso, por lo que, si no se toman en cuenta esos valores, sí existe correlación entre los metros cuadrados del segundo piso y el precio de venta de la casa, a pesar de que sea baja.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$BedroomAbvGr)
+habitaciones <- datosCasas$BedroomAbvGr
+mostrar <- ggplot(data=df, aes(x=habitaciones)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Cuartos"))
+plot(x = datosCasas$BedroomAbvGr, y= datosCasas$SalePrice, xlab= "Total de habitaciones sobre el suelo", ylab= "Precio de venta", main = "Correlación entre precio de venta y total de habitaciones sobre el suelo")
+abline(lm(datosCasas$SalePrice ~ datosCasas$BedroomAbvGr), col = "red")
+```
+
+La mayoría de casas cuenta con 3 cuartos sobre el nivel del suelo. Puede observarse también que no existe correlación entre la cantidad de cuartos y el precio de venta, ya que las casas que cuentan con más cuartos se encuentran entre los precios de venta más bajos.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$TotRmsAbvGrd)
+total_cuartos <- datosCasas$TotRmsAbvGrd
+mostrar <- ggplot(data=df, aes(x=total_cuartos)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Total de cuartos"))
+plot(x = datosCasas$TotRmsAbvGrd, y= datosCasas$SalePrice, xlab= "Total de cuartos sobre el suelo", ylab= "Precio de venta", main = "Correlación entre precio de venta y total de cuartos sobre el suelo")
+abline(lm(datosCasas$SalePrice ~ datosCasas$TotRmsAbvGrd), col = "red")
+```
+
+Puede observarse que en total de cuartos, sin tomar en cuenta los baños completos, la mayoría de casas cuenta con 6 cuartos. A su vez, puede observarse que este dato sí tiene correlación con el precio de venta, ya que a medida que va aumentando la cantidad de cuartos, va aumentando el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$GarageCars)
+garage_carros <- datosCasas$GarageCars
+mostrar <- ggplot(data=df, aes(x=garage_carros)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Tamaño del garage en cantidad de carros"))
+plot(x = datosCasas$GarageCars, y= datosCasas$SalePrice, xlab= "Tamaño del garage en capacidad de carros", ylab= "Precio de venta", main = "Correlación entre precio de venta y tamaño del carage en capacidad de carros")
+abline(lm(datosCasas$SalePrice ~ datosCasas$GarageCars), col = "red")
+```
+
+Puede observarse que la mayoría de casas tiene un garage con una capacidad de dos carros, al igual que existe una correlación entre este dato y el precio de venta, ya que a mayor cantidad de carros que entran en un garage, mayor precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$WoodDeckSF)
+area_madera <- datosCasas$WoodDeckSF
+mostrar <- ggplot(data=df, aes(x=area_madera)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Área exterior de madera"))
+plot(x = datosCasas$WoodDeckSF, y= datosCasas$SalePrice, xlab= "Area de madera", ylab= "Precio de venta", main = "Correlación entre precio de venta y area de madera")
+abline(lm(datosCasas$SalePrice ~ datosCasas$WoodDeckSF), col = "red")
+```
+
+Todos los valores en cero pueden ser interpretados como las casas que no cuentan con un área de madera, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de madera y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$OpenPorchSF)
+porche_abierto <- datosCasas$OpenPorchSF
+mostrar <- ggplot(data=df, aes(x=porche_abierto)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Área de porche abierto"))
+plot(x = datosCasas$OpenPorchSF, y= datosCasas$SalePrice, xlab= "Area de porche abierto", ylab= "Precio de venta", main = "Correlación entre precio de venta y area de porche abierto")
+abline(lm(datosCasas$SalePrice ~ datosCasas$OpenPorchSF), col = "red")
+```
+
+Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche abierto, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche abierto y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$EnclosedPorch)
+porche_cerrado <- datosCasas$EnclosedPorch
+mostrar <- ggplot(data=df, aes(x=porche_cerrado)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Área de porche cerrado"))
+plot(x = datosCasas$EnclosedPorch, y= datosCasas$SalePrice, xlab= "Area de porche cerrado", ylab= "Precio de venta", main = "Correlación entre precio de venta y area de porche cerrado")
+abline(lm(datosCasas$SalePrice ~ datosCasas$EnclosedPorch), col = "red")
+```
+
+Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche cerrado, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche cerrado y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$ScreenPorch)
+porche_ventana <- datosCasas$ScreenPorch
+mostrar <- ggplot(data=df, aes(x=porche_ventana)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Área de porche con ventana"))
+plot(x = datosCasas$ScreenPorch, y= datosCasas$SalePrice, xlab= "Area de porche con ventana", ylab= "Precio de venta", main = "Correlación entre precio de venta y area de porche con ventana")
+abline(lm(datosCasas$SalePrice ~ datosCasas$ScreenPorch), col = "red")
+```
+
+Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche con ventana, luego al observar los demás valores se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche con ventana y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$PoolArea)
+area_piscina <- datosCasas$PoolArea
+mostrar <- ggplot(data=df, aes(x=area_piscina)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Área de piscina"))
+plot(x = datosCasas$PoolArea, y= datosCasas$SalePrice, xlab= "Area de piscina", ylab= "Precio de venta", main = "Correlación entre precio de venta y area de piscina")
+abline(lm(datosCasas$SalePrice ~ datosCasas$PoolArea), col = "red")
+```
+
+Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de piscina, luego al observar los demás valores se considera que no existen suficientes datos para determinar que sí existe correlación entre el área de piscina y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$MoSold)
+mes_venta <- datosCasas$MoSold
+mostrar <- ggplot(data=df, aes(x=mes_venta)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Mes de venta"))
+plot(x = datosCasas$MoSold, y= datosCasas$SalePrice, xlab= "Mes de venta", ylab= "Precio de venta", main = "Correlación entre precio de venta y mes de venta")
+abline(lm(datosCasas$SalePrice ~ datosCasas$MoSold), col = "red")
+```
+
+Puede observarse que han habido más ventas durante el mes de junio, sin embargo, no existe correlación entre el mes de venta y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$YrSold)
+ano_venta <- datosCasas$YrSold
+mostrar <- ggplot(data=df, aes(x=ano_venta)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Año de venta"))
+plot(x = datosCasas$YrSold, y= datosCasas$SalePrice, xlab= "Año de venta", ylab= "Precio de venta", main = "Correlación entre precio de venta y año de venta")
+abline(lm(datosCasas$SalePrice ~ datosCasas$YrSold), col = "red")
+```
+
+Puede observarse que han habido más ventas durante el 2009, sin embargo, no existe correlación entre el año de venta y el precio de venta.
+
+```{r echo=FALSE}
+df <- as.data.frame(datosCasas$BsmtQual)
+altura_sotano <-datosCasas$BsmtQual
+mostrar <- ggplot(data=df, aes(x=altura_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Altura del sótano"))
+```
+
+Con esta variable se evalúa la altura del sótado, en donde la mayoría cuenta con una altura típica ded 80 - 89 pulgadas.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$Condition1)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$Condition1)
+proximidad_condiciones <-datosCasas$Condition1
+mostrar <- (ggplot(data=df, aes(x=proximidad_condiciones)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal())
+print(mostrar + ggtitle("Proximidad respecto a condiciones"))
+```
+
+Puede observarse que la proximidad más común es la normal.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$HouseStyle)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$HouseStyle)
+tipo_vivienda <-datosCasas$HouseStyle
+mostrar <- (ggplot(data=df, aes(x=tipo_vivienda)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal())
+print(mostrar + ggtitle("Tipo de vivienda"))
+```
+
+Puede observarse cómo es que el tipo de vivienda más común es el de un solo nivel, seguido por las casas de 2 niveles.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$BldgType)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$BldgType)
+estilo_vivienda <- datosCasas$BldgType
+mostrar <- (ggplot(data=df, aes(x=estilo_vivienda)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal())
+print(mostrar + ggtitle("Estilo de vivienda"))
+```
+
+De la misma manera, puede observarse que los estilos de viviendas más comunes son para una sola familia.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$OverallQual)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$OverallQual)
+calidad_materiales_y_acabados <- datosCasas$OverallQual
+mostrar1 <- ggplot(data=df, aes(x=calidad_materiales_y_acabados)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar1 + ggtitle("Materiales y acabados generales"))
+mytable<-table(datosCasas$OverallCond)
+mytable
+prop.table(mytable)
+df2 <- as.data.frame(datosCasas$OverallCond)
+condicion_casa <-datosCasas$OverallCond
+mostrar2 <- ggplot(data=df2, aes(x=condicion_casa)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar2 + ggtitle("Condiciones generales"))
+```
+
+En estos gráficos puede observarse que tanto los materiales, acabado y condidiones generales de las casas se encuentran en promedio en un valor de 5 de 10.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$BsmtCond)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$BsmtCond)
+condicion_sotano <-datosCasas$BsmtCond
+mostrar <- ggplot(data=df, aes(x=condicion_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Condicion del sótano"))
+```
+
+Podemos observar que la mayoría de los sótanos se encuentra en una condición típica, con un poco de humedad, seguido por una buena condición.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$BsmtExposure)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$BsmtExposure)
+exposicion_sotano <-datosCasas$BsmtExposure
+mostrar <- ggplot(data=df, aes(x=exposicion_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Exposición del sótano"))
+```
+
+En este caso, se representa los muros del sótano a nivel de jardín o si existe un espacio suficiente para tener una salida directa del sótado al jardín, en donde la mayoría no cuenta con espacio suficiente para tener una puerta directa hacia el jardín.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$Heating)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$Heating)
+calefaccion <- datosCasas$Heating
+mostrar <- ggplot(data=df, aes(x=calefaccion)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Tipo de calefacción"))
+```
+
+Puede observarse que el tipo de calefacción más común es el horno de aire caliente forzado a gas.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$BsmtFullBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$BsmtFullBath)
+banios_completos_sotano <- datosCasas$BsmtFullBath
+mostrar <- ggplot(data=df, aes(x=banios_completos_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Baños completos en sótano"))
+```
+
+Puede observarse que es más común que no se cuente con baños completos en los sótanos.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$Electrical)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$Electrical)
+sistema_electrico <- datosCasas$Electrical
+mostrar <- ggplot(data=df, aes(x=sistema_electrico)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Tipo de sistema eléctrico"))
+```
+
+En la mayoría de hogares se cuenta con us sistemaeléctrico de disyuntores estándar y Romex
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$FullBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$FullBath)
+banios_completos<- datosCasas$FullBath
+mostrar <- ggplot(data=df, aes(x=banios_completos)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Baños completos"))
+```
+
+En la mayoría de casas se cuenta con 2 baños completos, sin tomar en cuenta los baños del sótano.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$HalfBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$HalfBath)
+medios_banios <- datosCasas$HalfBath
+mostrar <- ggplot(data=df, aes(x=medios_banios)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Medios baños"))
+```
+
+La mayoría de casas no cuenta con medios baños.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$KitchenAbvGr)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$KitchenAbvGr)
+cocinas <- datosCasas$KitchenAbvGr
+mostrar <- ggplot(data=df, aes(x=cocinas)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Cocinas"))
+```
+
+La mayoría de casas cuenta únicamente con una cocina sobre el nivel del suelo.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$KitchenQual)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$KitchenQual)
+calidad_cocinas <- datosCasas$KitchenQual
+mostrar <- ggplot(data=df, aes(x=calidad_cocinas)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Calidad de las cocinas"))
+```
+
+En este gráfico puede observarse que la calidad de las cocinas es típica o promedio.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$Fireplaces)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$Fireplaces)
+chimeneas <- datosCasas$Fireplaces
+mostrar <- ggplot(data=df, aes(x=chimeneas)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Chimeneas"))
+```
+
+En la mayoría de las casas no se cuenta con chimeneas, sin embargo, es poca la diferencia con la cantidad de casas que cuentan con una chimenea.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$SaleType)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$SaleType)
+tipo_venta <- datosCasas$SaleType
+mostrar <- ggplot(data=df, aes(x=tipo_venta)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Tipo de venta"))
+```
+
+Puede observarse que el tipo de venta más común es el convencional con una escritura de garantía.
+
+```{r echo=FALSE}
+mytable<-table(datosCasas$SaleCondition)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$SaleCondition)
+condicion_venta <- datosCasas$SaleCondition
+mostrar <- ggplot(data=df, aes(x=condicion_venta)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Condición de venta"))
+```
+
+Por último, puede observarse que la condición de venta más común es una venta normal.
