@@ -16,6 +16,7 @@ library(ggplot2)
 # Laboratorio No. 1: Análisis exploratorio PCA y Apriori
 
 ## Análisis Exploratorio
+
 A continuación se mostrará un resumen de cada una de las variables y el tipo 
 ```{r analisis, echo=FALSE}
 datosCasas <- read.csv("train.csv")
@@ -30,12 +31,14 @@ De estas variables se ha considerado que algunas de ellas valen la pena estudiar
 
 A continuación se explicará la distribución de las variables y su comportamiento:
 
+### Metros cuadrados por lote
 ```{r grfBldngCss, echo=FALSE}
 barplot(datosCasas$LotArea, xlab= "Lote", ylab = "Metros cuadrados", main="Tamaño del lote en metros cuadrados")
 ```
 
 En este caso, puede observarse que la mayoría de casas se encuentra debajo de los 50,ooo metros cuadrados y que la casa que cuenta con mayor área de lote cuenta con más de 200,000 metros cuadrados.
 
+### Precio de venta
 ```{r echo=FALSE}
 plot(x = datosCasas$LotArea, y= datosCasas$SalePrice, xlab= "Tamaño del lote", ylab= "Precio de venta", main = "Correlación entre tamaño del lote y precio de la casa")
 abline(lm(datosCasas$SalePrice ~ datosCasas$LotArea), col = "red")
@@ -43,6 +46,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$LotArea), col = "red")
 
 Puede observarse que no existe correlación entre el precio de la casa y el tamaño del lote, esto ya que la mayoría de valores se encuentran antes de los 50,000 metros cuadrados y el precio de venta cambia alrededor de los mismos tamaños de lote, además, las casas a mayor precio se encuentran entre los tamaño de lote menores.
 
+### Año de construcción
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$YearBuilt)
 anio_construccion <-datosCasas$YearBuilt
@@ -59,6 +63,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$YearBuilt), col = "red")
 
 Como puede observarse, sí existe una correlación entre el año de construcción y el precio de la casa, ya que puede observarse cómo es que los valores de precio van aumentando a medida que los años van incrementando.
 
+### Metros cuadrados por sótano
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$TotalBsmtSF)
 metros_cuadrados_sotano <-datosCasas$TotalBsmtSF
@@ -71,6 +76,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$TotalBsmtSF), col = "red")
 Según lo observado, a pesar que se cuente con lagunos puntos atipicos, sí existe una correlación entre el precio de venta y el total de metros cuadrados del area del sotano.
 En este caso, los puntos atípicos representan que hay casas que no cuentan con un sótano tan grande y que, sin embargo, el precio de estas es bastante elevado.
 
+### Metros cuadrados por primer piso
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$X1stFlrSF)
 metros_cuadrados_primer_piso <- datosCasas$X1stFlrSF
@@ -82,6 +88,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$X1stFlrSF), col = "red")
 
 Puede observarse que sí existe correlación entre el total de metros cuadrados del primer piso y el precio de venta. En este caso los puntos atípicos que pueden observarse representan, al igual que con los metros cuadrados del sótano, existen casas que no cuentan con un primer piso tan grande y aún así tienen un precio elevado.
 
+### Metros cuadrados por segundo piso
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$X2ndFlrSF)
 metros_cuadrados_segundo_piso <- datosCasas$X2ndFlrSF
@@ -93,6 +100,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$X2ndFlrSF), col = "red")
 
 En este caso, los valores que cuentan con 0 metros cuadrados en el segundo piso hacen referencia a las casas que no cuentan con un segundo piso, por lo que, si no se toman en cuenta esos valores, sí existe correlación entre los metros cuadrados del segundo piso y el precio de venta de la casa, a pesar de que sea baja.
 
+### Habitaciones sobre el suelo
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$BedroomAbvGr)
 habitaciones <- datosCasas$BedroomAbvGr
@@ -104,6 +112,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$BedroomAbvGr), col = "red")
 
 La mayoría de casas cuenta con 3 cuartos sobre el nivel del suelo. Puede observarse también que no existe correlación entre la cantidad de cuartos y el precio de venta, ya que las casas que cuentan con más cuartos se encuentran entre los precios de venta más bajos.
 
+### Cuartos sobre el suelo
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$TotRmsAbvGrd)
 total_cuartos <- datosCasas$TotRmsAbvGrd
@@ -115,6 +124,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$TotRmsAbvGrd), col = "red")
 
 Puede observarse que en total de cuartos, sin tomar en cuenta los baños completos, la mayoría de casas cuenta con 6 cuartos. A su vez, puede observarse que este dato sí tiene correlación con el precio de venta, ya que a medida que va aumentando la cantidad de cuartos, va aumentando el precio de venta.
 
+### Tamaño del garage respecto a la capacidad de carros
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$GarageCars)
 garage_carros <- datosCasas$GarageCars
@@ -126,6 +136,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$GarageCars), col = "red")
 
 Puede observarse que la mayoría de casas tiene un garage con una capacidad de dos carros, al igual que existe una correlación entre este dato y el precio de venta, ya que a mayor cantidad de carros que entran en un garage, mayor precio de venta.
 
+### Area de madera fuera de cada casa
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$WoodDeckSF)
 area_madera <- datosCasas$WoodDeckSF
@@ -137,6 +148,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$WoodDeckSF), col = "red")
 
 Todos los valores en cero pueden ser interpretados como las casas que no cuentan con un área de madera, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de madera y el precio de venta.
 
+### Area de porche abierto
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$OpenPorchSF)
 porche_abierto <- datosCasas$OpenPorchSF
@@ -148,6 +160,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$OpenPorchSF), col = "red")
 
 Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche abierto, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche abierto y el precio de venta.
 
+### Area de porche cerrado
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$EnclosedPorch)
 porche_cerrado <- datosCasas$EnclosedPorch
@@ -159,6 +172,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$EnclosedPorch), col = "red")
 
 Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche cerrado, luego al observar los demás valores, se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche cerrado y el precio de venta.
 
+### Area de porche con ventana
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$ScreenPorch)
 porche_ventana <- datosCasas$ScreenPorch
@@ -170,6 +184,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$ScreenPorch), col = "red")
 
 Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de porche con ventana, luego al observar los demás valores se considera que existen demasiados valores atípicos por lo que no hay correlación entre el área de porche con ventana y el precio de venta.
 
+### Area de piscina
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$PoolArea)
 area_piscina <- datosCasas$PoolArea
@@ -181,6 +196,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$PoolArea), col = "red")
 
 Todos los valores en cero pueden ser interpretados como las casas que no cuentan con área de piscina, luego al observar los demás valores se considera que no existen suficientes datos para determinar que sí existe correlación entre el área de piscina y el precio de venta.
 
+### Mes de venta
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$MoSold)
 mes_venta <- datosCasas$MoSold
@@ -192,6 +208,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$MoSold), col = "red")
 
 Puede observarse que han habido más ventas durante el mes de junio, sin embargo, no existe correlación entre el mes de venta y el precio de venta.
 
+### Año de venta
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$YrSold)
 ano_venta <- datosCasas$YrSold
@@ -203,6 +220,7 @@ abline(lm(datosCasas$SalePrice ~ datosCasas$YrSold), col = "red")
 
 Puede observarse que han habido más ventas durante el 2009, sin embargo, no existe correlación entre el año de venta y el precio de venta.
 
+### Altura del sotano
 ```{r echo=FALSE}
 df <- as.data.frame(datosCasas$BsmtQual)
 altura_sotano <-datosCasas$BsmtQual
@@ -210,8 +228,61 @@ mostrar <- ggplot(data=df, aes(x=altura_sotano)) + geom_bar(stat="count", width=
 print(mostrar + ggtitle("Altura del sótano"))
 ```
 
-Con esta variable se evalúa la altura del sótado, en donde la mayoría cuenta con una altura típica ded 80 - 89 pulgadas.
+Con esta variable se evalúa la altura del sótano, en donde la mayoría cuenta con una altura típica ded 80 - 89 pulgadas.
 
+### Cantidad de baños completos en los sotanos
+```{r echo=FALSE}
+mytable<-table(datosCasas$BsmtFullBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$BsmtFullBath)
+banios_completos_sotano <- datosCasas$BsmtFullBath
+mostrar <- ggplot(data=df, aes(x=banios_completos_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Baños completos en sótano"))
+```
+
+En la cantidad de baños completos en el sótano, se cuentan con las opciones desde no contar con uno y como máximo contar con 3. Puede observarse que es más común que no se cuente con baños completos en los sótanos.
+
+### Cantidad de baños completos
+```{r echo=FALSE}
+mytable<-table(datosCasas$FullBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$FullBath)
+banios_completos<- datosCasas$FullBath
+mostrar <- ggplot(data=df, aes(x=banios_completos)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Baños completos"))
+```
+
+En este caso se evalúa la cantidad de baños completos en toda la casa, no únicamente en el sótano, y de la misma manera se cuenta con las opciones desde que no se cuente con baños completos hasta contar con un máximo de 3. En la mayoría de casas se cuenta con 2 baños completos, sin tomar en cuenta los baños del sótano.
+
+### Cantidad de medios baños
+```{r echo=FALSE}
+mytable<-table(datosCasas$HalfBath)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$HalfBath)
+medios_banios <- datosCasas$HalfBath
+mostrar <- ggplot(data=df, aes(x=medios_banios)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Medios baños"))
+```
+
+En este caso se evalúa la cantidad de medios baños en toda la casa y se cuenta con las opciones desde que no se cuente con medios baños hasta contar con un máximo de 2.La mayoría de casas no cuenta con medios baños.
+
+### Cantidad de chimeneas
+```{r echo=FALSE}
+mytable<-table(datosCasas$Fireplaces)
+mytable
+prop.table(mytable)
+df <- as.data.frame(datosCasas$Fireplaces)
+chimeneas <- datosCasas$Fireplaces
+mostrar <- ggplot(data=df, aes(x=chimeneas)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
+print(mostrar + ggtitle("Chimeneas"))
+```
+
+Al evaluar la cantidad de chimeneas con las que se cuenta en las casas, existe la posibilidad de que no se cuente con ninguna o que se cuente como máximo con 3. En la mayoría de las casas no se cuenta con chimeneas, sin embargo, es poca la diferencia con la cantidad de casas que cuentan con una chimenea.
+
+### Proximidad
 ```{r echo=FALSE}
 mytable<-table(datosCasas$Condition1)
 mytable
@@ -222,8 +293,20 @@ mostrar <- (ggplot(data=df, aes(x=proximidad_condiciones)) + geom_bar(stat="coun
 print(mostrar + ggtitle("Proximidad respecto a condiciones"))
 ```
 
-Puede observarse que la proximidad más común es la normal.
+En cuanto a la proximidad, se tiene la siguiente distribución:
+Artery: Adyacente a una calle arterial
+Feedr: Adyacente a una calle de alimentación
+Norm: Normal
+RRNn: A 200' del ferrocarril norte-sur
+RRAn: Junto al ferrocarril norte-sur
+PosN: Cerca de un parque, cinturón verde, etc.
+PosA: Junto a una característica externa positiva
+RRNe: A 200' del ferrocarril este-oeste
+RRAe: Adyacente al ferrocarril este-oeste
 
+Entre todas las posibles proximidades, puede observarse que la proximidad más común es la normal.
+
+### Tipo de vivienda
 ```{r echo=FALSE}
 mytable<-table(datosCasas$HouseStyle)
 mytable
@@ -234,8 +317,9 @@ mostrar <- (ggplot(data=df, aes(x=tipo_vivienda)) + geom_bar(stat="count", width
 print(mostrar + ggtitle("Tipo de vivienda"))
 ```
 
-Puede observarse cómo es que el tipo de vivienda más común es el de un solo nivel, seguido por las casas de 2 niveles.
+En este caso se habla del estilo de vivienda, puede haber viviendas de un piso, casas en las que el segundo piso sea considerado como medio y que este se encuentre terminado o no terminado, de la misma con dos pisos. También se cuenta con casas de vestíbulo dividido y con casas de piso dividido. Puede observarse cómo es que el tipo de vivienda más común es el de un solo nivel, seguido por las casas de 2 niveles.
 
+### Estilo de vivienda
 ```{r echo=FALSE}
 mytable<-table(datosCasas$BldgType)
 mytable
@@ -246,8 +330,9 @@ mostrar <- (ggplot(data=df, aes(x=estilo_vivienda)) + geom_bar(stat="count", wid
 print(mostrar + ggtitle("Estilo de vivienda"))
 ```
 
-De la misma manera, puede observarse que los estilos de viviendas más comunes son para una sola familia.
+En el estilo de vivienda se estudia la cantidad de familias que ocupan la casa. De la misma manera, puede observarse que los estilos de viviendas más comunes son para una sola familia.
 
+### Materiales y acabados generales
 ```{r echo=FALSE}
 mytable<-table(datosCasas$OverallQual)
 mytable
@@ -265,8 +350,10 @@ mostrar2 <- ggplot(data=df2, aes(x=condicion_casa)) + geom_bar(stat="count", wid
 print(mostrar2 + ggtitle("Condiciones generales"))
 ```
 
+Al estudiar los materiales, acabado y condiciones se estudia su calidad de 1 a 10 y de 1 a 5 respectivamente.
 En estos gráficos puede observarse que tanto los materiales, acabado y condidiones generales de las casas se encuentran en promedio en un valor de 5 de 10.
 
+### Condicion del sotano
 ```{r echo=FALSE}
 mytable<-table(datosCasas$BsmtCond)
 mytable
@@ -277,8 +364,17 @@ mostrar <- ggplot(data=df, aes(x=condicion_sotano)) + geom_bar(stat="count", wid
 print(mostrar + ggtitle("Condicion del sótano"))
 ```
 
+En las condiciones del sótano se cuenta con las siguientes posibilidades:
+Ex: Excelente
+Gd: Bueno
+TA: Típico
+Fa: Justo
+Po: Pobre
+NA: No hay sotano
+
 Podemos observar que la mayoría de los sótanos se encuentra en una condición típica, con un poco de humedad, seguido por una buena condición.
 
+### Exposicion del sotano
 ```{r echo=FALSE}
 mytable<-table(datosCasas$BsmtExposure)
 mytable
@@ -289,8 +385,16 @@ mostrar <- ggplot(data=df, aes(x=exposicion_sotano)) + geom_bar(stat="count", wi
 print(mostrar + ggtitle("Exposición del sótano"))
 ```
 
-En este caso, se representa los muros del sótano a nivel de jardín o si existe un espacio suficiente para tener una salida directa del sótado al jardín, en donde la mayoría no cuenta con espacio suficiente para tener una puerta directa hacia el jardín.
+En este caso, se representa los muros del sótano a nivel de jardín o si existe un espacio suficiente para tener una salida directa del sótado al jardín, dividiéndose de la siguiente manera:
+Gd: buena exposicicon
+Av: exposicion promedio
+Mn: mínima exposicion
+No: no hay exposición
+NA: no hay sótano
 
+En este caso la mayoría no cuenta con espacio suficiente para tener una puerta directa hacia el jardín.
+
+### Tipo de calefaccion
 ```{r echo=FALSE}
 mytable<-table(datosCasas$Heating)
 mytable
@@ -301,20 +405,17 @@ mostrar <- ggplot(data=df, aes(x=calefaccion)) + geom_bar(stat="count", width=0.
 print(mostrar + ggtitle("Tipo de calefacción"))
 ```
 
+Los tipos de calefacción se dividen en los siguientes:
+Floor: horno de piso 
+GasA: horno de aire caliente forzado a gas
+GasW: calefaccion de agua caliente o vapor a gas
+Grav: horno de gravedad
+OthW: calefacción por agua caliente o vapor que no sea de gas
+Wall: Horno de pared
+
 Puede observarse que el tipo de calefacción más común es el horno de aire caliente forzado a gas.
 
-```{r echo=FALSE}
-mytable<-table(datosCasas$BsmtFullBath)
-mytable
-prop.table(mytable)
-df <- as.data.frame(datosCasas$BsmtFullBath)
-banios_completos_sotano <- datosCasas$BsmtFullBath
-mostrar <- ggplot(data=df, aes(x=banios_completos_sotano)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
-print(mostrar + ggtitle("Baños completos en sótano"))
-```
-
-Puede observarse que es más común que no se cuente con baños completos en los sótanos.
-
+### Tipo de sistema electrico
 ```{r echo=FALSE}
 mytable<-table(datosCasas$Electrical)
 mytable
@@ -327,30 +428,7 @@ print(mostrar + ggtitle("Tipo de sistema eléctrico"))
 
 En la mayoría de hogares se cuenta con us sistemaeléctrico de disyuntores estándar y Romex
 
-```{r echo=FALSE}
-mytable<-table(datosCasas$FullBath)
-mytable
-prop.table(mytable)
-df <- as.data.frame(datosCasas$FullBath)
-banios_completos<- datosCasas$FullBath
-mostrar <- ggplot(data=df, aes(x=banios_completos)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
-print(mostrar + ggtitle("Baños completos"))
-```
-
-En la mayoría de casas se cuenta con 2 baños completos, sin tomar en cuenta los baños del sótano.
-
-```{r echo=FALSE}
-mytable<-table(datosCasas$HalfBath)
-mytable
-prop.table(mytable)
-df <- as.data.frame(datosCasas$HalfBath)
-medios_banios <- datosCasas$HalfBath
-mostrar <- ggplot(data=df, aes(x=medios_banios)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
-print(mostrar + ggtitle("Medios baños"))
-```
-
-La mayoría de casas no cuenta con medios baños.
-
+### Cantidad de cocinas sobre el suelo (sin contar cocinas en los sotanos)
 ```{r echo=FALSE}
 mytable<-table(datosCasas$KitchenAbvGr)
 mytable
@@ -361,8 +439,9 @@ mostrar <- ggplot(data=df, aes(x=cocinas)) + geom_bar(stat="count", width=0.7, f
 print(mostrar + ggtitle("Cocinas"))
 ```
 
-La mayoría de casas cuenta únicamente con una cocina sobre el nivel del suelo.
+En cuanto a la cantidad de cocinas sobre el suelo, es decir, la cantidad total de cocinas sin tomar en cuenta aquellas que se encuentran en el sótano, puede haber 1 o 2 cocinas. La mayoría de casas cuenta únicamente con una cocina sobre el nivel del suelo.
 
+### Calidad de las cocinas
 ```{r echo=FALSE}
 mytable<-table(datosCasas$KitchenQual)
 mytable
@@ -373,20 +452,15 @@ mostrar <- ggplot(data=df, aes(x=calidad_cocinas)) + geom_bar(stat="count", widt
 print(mostrar + ggtitle("Calidad de las cocinas"))
 ```
 
+La calidad de las cocinas se divide en lo siguiente: 
+Ex: Excelente
+Gd: Buena
+TA: Típica
+Fa: justo
+Po: pobre
 En este gráfico puede observarse que la calidad de las cocinas es típica o promedio.
 
-```{r echo=FALSE}
-mytable<-table(datosCasas$Fireplaces)
-mytable
-prop.table(mytable)
-df <- as.data.frame(datosCasas$Fireplaces)
-chimeneas <- datosCasas$Fireplaces
-mostrar <- ggplot(data=df, aes(x=chimeneas)) + geom_bar(stat="count", width=0.7, fill = "steelblue")+theme_minimal()
-print(mostrar + ggtitle("Chimeneas"))
-```
-
-En la mayoría de las casas no se cuenta con chimeneas, sin embargo, es poca la diferencia con la cantidad de casas que cuentan con una chimenea.
-
+### Tipo de venta
 ```{r echo=FALSE}
 mytable<-table(datosCasas$SaleType)
 mytable
@@ -397,8 +471,21 @@ mostrar <- ggplot(data=df, aes(x=tipo_venta)) + geom_bar(stat="count", width=0.7
 print(mostrar + ggtitle("Tipo de venta"))
 ```
 
+Entre los tipos de ventas se encuentran los siguientes: 
+WD: Escritura de garantía - convencional
+CWD: Escritura de garantía - dinero en efectivo
+VWD: Escritura de garantía - Préstamo VA
+New: Casa recién costruida y vendida
+COD: Oficial de la corte o estado
+Con: Contrato 15% de pago inicial en términos regulares
+ConLw: Contrato de bajo pago inicial y bajo interés
+ConLI: Contrato de bajo interés
+ConLD: Contrato de baja cuota inicial
+Oth: otro
+
 Puede observarse que el tipo de venta más común es el convencional con una escritura de garantía.
 
+### Condicion de venta
 ```{r echo=FALSE}
 mytable<-table(datosCasas$SaleCondition)
 mytable
@@ -409,4 +496,11 @@ mostrar <- ggplot(data=df, aes(x=condicion_venta)) + geom_bar(stat="count", widt
 print(mostrar + ggtitle("Condición de venta"))
 ```
 
+Entre las condiciones de venta se encuentran las siguientes:
+Normal: venta normal
+Abnorml: venta normal - comercio, ejecución hipotecaria, venta al descubierto
+AdjLand: compra de terreno contiguo
+Alloca: adjudicación - dos propiedades vinculadas con escrituras separadas, normalmente un condominio con una unidad de garaje
+Family: venta entre miembros de la familia
+Partial: la vivienda no estaba terminada cuando se evaluó por última vez (asociada a viviendas nuevas)
 Por último, puede observarse que la condición de venta más común es una venta normal.
