@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 #"C:/Users/andre/OneDrive/Documentos/3er año/2do semestre/Data science/Lab1DS"
 #Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/
-knitr::opts_knit$set(root.dir="C:/Users/Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/")
+knitr::opts_knit$set(root.dir="C:/Users/andre/OneDrive/Documentos/3er año/2do semestre/Data science/Lab1DS")
 
 library(ggplot2)
 ```
@@ -765,7 +765,8 @@ Podemos observar que se han creado 5,019,325 reglas de asociación. Estas logran
 
 ### Análisis exploratorio
 
-kkk
+En el set de datos utilizado se ha encontrado que se cuenta con un total de 81 variables, siendo 43 de tipo character y 38 de tipo integer, entre estas se encuentran algunas como el tamaño del lote, la cantidad de habitaciones, la cantidad de baños completos y medios baños, el estado de la cocina, o cocinas, y el estado del sótano, una de ellas es el id por lo que no ha sido utilizado para realizar los análisis necesarios.
+Se han encontrado datos interesantes tales como que el lote con mayor tamaño cuenta con más de 200,000 metros cuadrados y que, contradictoriamente a lo que podría imaginarse, no existe correlación entre el precio de la casa y el tamaño del lote pero sí existe correlación entre el año de construcción y el precio de esta, al igual que con la cantidad de metros cuadrados del sótano. También se han encontrado datos sobre los años en los que se ha construido la mayor cantidad de casas y la capacidad de un garage basado en la cantidad de carros que pueden ocuparlo.
 
 ### PCA
 
