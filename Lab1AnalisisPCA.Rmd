@@ -759,7 +759,8 @@ reglas<-apriori(datos, parameter = list(support = 0.2,
                                         target = "rules"))
 ```
 
-Podemos observar que se han creado varias reglas de asociación. Estas logran identificar relaciones raras o imperceptibles a simple vista en nuestro set de datos, y, tomando en cuenta la gran cantidad de datos con los que se cuenta a pesar de haber trabajado únicamente con las variables categóricas, tiene sentido la cantidad de reglas que han sido generadas.
+
+Podemos observar que se han creado varias reglas de asociación, en algunos casos alrededor de 3 millones y en otros 5 millones. Estas logran identificar relaciones raras o imperceptibles a simple vista en nuestro set de datos, y, tomando en cuenta la gran cantidad de datos con los que se cuenta a pesar de haber trabajado únicamente con las variables categóricas, tiene sentido la cantidad de reglas que han sido generadas.
 
 ## Conclusiones 
 
