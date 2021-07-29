@@ -8,7 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #"C:/Users/andre/OneDrive/Documentos/3er año/2do semestre/Data science/Lab1DS"
-knitr::opts_knit$set(root.dir="C:/Users/andre/OneDrive/Documentos/3er año/2do semestre/Data science/Lab1DS")
+#Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/
+knitr::opts_knit$set(root.dir="C:/Users/Ingebor Rubio/Desktop/Trabajos/Sexto Semestre/Data science/Lab1DS/")
 
 library(ggplot2)
 ```
@@ -33,7 +34,7 @@ str(datosCasas)
 table(unlist(lapply(datosCasas, class)))
 ```
 
-Con esto puede observarse que, del total de variables con las que cuenta nuestra base de datos, 43 son de tipo character y 38 son de tipo integer, siendo una de ellas el id por lo que no será utilizado en el futuro para formar grupos. 
+Con esto puede observarse que, del total de variables con las que cuenta nuestra base de datos, 43 son de tipo character y 38 son de tipo integer, siendo una de ellas el id por lo que no será utilizado en el futuro para realizar los respectivos análisis. 
 
 De estas variables se ha considerado que algunas de ellas valen la pena estudiarlas más a fondo para conocer las condiciones de los datos con los que se llevará a cabo el entrenamiento y las pruebas.
 
@@ -515,9 +516,10 @@ Partial: la vivienda no estaba terminada cuando se evaluó por última vez (asoc
 Por último, puede observarse que la condición de venta más común es una venta normal.
 
 
-# PCA
+## PCA
 
 Debido a la gran cantidad de variables y datos el procesamiento y estudio de datos se vuelve algo tedioso y complicado, por lo tanto, se propone realizar pruebas para evaluar la viabilidad de un análisis de componentes principales.
+
 ```{r PCA Cor, echo=FALSE}
 #Se trabajará con las variables numéricas
 #datosCasas[,-c(1,3,6,7,8,9,10,11,12,13,14,15,16,17,22,23,24,25,26,28,29,30,31,32,33,34,36,40,41,42,43,54,56,58,59,61,64,65,66,73,74,75,79,80)]
@@ -527,12 +529,14 @@ h<-h[complete.cases(h),]
 dataCor<-cor(h,use = "pairwise.complete.obs")
 det(dataCor)
 ```
+
 El determinante es un valor sumamente pequeño muy próximo a 0, por lo tanto indica que existe multicolinealidad
 
 ```{r Analisis factorial, echo=FALSE}
 #pafDatos<-paf(as.matrix(h))
 #error in solve default(x) : sistema es computacionalmente singular: número de condición recíproco = 2.96373e-18
 ```
+
 -error in solve default(x) : sistema es computacionalmente singular: número de condición recíproco = 2.96373e-18
 
 Debido a que el determinante es extremadamente cercano a 0, el sistema es computacionalmente singular y por lo tanto no se puede invertir para realizar la prueba, esto se da debido a una dependencia lieneal entre las columnas, por lo que existen variables fuertemente relacionadas, para ejemplificar mejor esto, se procederá a utilizar una prueba de esfericidad de Barlett en donde se tiene lo siguiente:
@@ -542,15 +546,18 @@ Ha: la matriz de correlaciones es diferente a la matriz identidad
 ```{r Esfericidad de Barlett, echo=FALSE}
 cortest.bartlett(datosCasas[,-c(1,3,6,7,8,9,10,11,12,13,14,15,16,17,22,23,24,25,26,28,29,30,31,32,33,34,36,40,41,42,43,54,56,58,59,61,64,65,66,73,74,75,79,80)])
 ```
+
 Debido a que el valor p es 0 (valor teórico) esto implica que es menor a la signficancia (0.05), por lo tanto se rechaza la hipótesis nula y se acepta que la matriz de correlaciones es diferente a la matiz identidad, lo que implica que si parece ser conveniente realizar un PCA para disminuir mis variables.
 
 ```{r matriz general Cor, echo=FALSE}
 corMatrix<-cor(h,use = "pairwise.complete.obs")
 corrplot(corMatrix, method = 'square')
 ```
+
 Para observar rapidamente la correlaciones entre variables se hace un gráfico en donde la intensidad del color indica que tan interelacionados están los componentes, es evidente que existen varias variables que muestran estar fuertemente relacionados entre sí, por lo que tambien indica que un análisis de componentes es factible.
 
 Para comenzar formalmente el análisis se deben de normalizar los datos para poder escalarlos.
+
 ```{r normalización, echo=FALSE}
 data<-prcomp(h, scale = T)
 data
@@ -559,18 +566,22 @@ data
 ```{r resumen norm, echo=FALSE}
 summary(data)
 ```
-en el resúmen observando la proporción acumulativa podemos determinar hasta que componentes tenemos una explicación razonable. En el componente 17 (reduciendo hasta 20) se obtiene una aexplicación de la varianza de hasta el 80% mientras que en el componente 22 (reduciendo hasta 15) se explica hasta el 90%
+
+en el resúmen observando la proporción acumulativa podemos determinar hasta que componentes tenemos una explicación razonable. En el componente 17 (reduciendo hasta 20) se obtiene una explicación de la varianza de hasta el 80% mientras que en el componente 22 (reduciendo hasta 15) se explica hasta el 90%
   
-  ```{r obtenerPCA, echo=FALSE}
+```{r obtenerPCA, echo=FALSE}
 pca<-PCA(h,ncp=ncol(h), scale.unit = T)
 summary(pca)
 ```
+
 En el gráfico de variables se puede ver la representación de las mismas en las primeras dos dimensiones y en que regiones pueden ser agrupadas por una fuerte correlación. También se observa en el output los valores propios y representación en cada dimensión que se verá mejor en los gráficos a continuación.
+
 ```{r graficos de análisis, echo=FALSE}
 fviz_eig(data, addlabels = TRUE, ylim = c(0, 90))
 fviz_eig(data, addlabels = TRUE, choice = c("eigenvalue"), ylim = c(0, 3))
 
 ```
+
 En el primer gráfico se observa la explicación acumulativa de la varianza en cada dimensión, a pesar de que de la primera dimensión hay una disminución significativa, podemos observar con cuales se pueden trabajar de mejor manera en el segundo gráfico, en donde si el valor propio es mayor a 1 entonces si se debe de utilizar. Anteriormente se había establecido que para poder explicar más de 80% de la varianza se deben de utilizar como mínimo 17 componentes principales.
 
 ```{r, echo=FALSE}
@@ -586,101 +597,180 @@ En este gráfico se puede ver la calidad de representación de cada variable en 
 var<-get_pca_var(data)
 corrplot(var$cos2, is.corr = F)
 ```
+
 En este gráfico se puede observar la contribución de cada variable en cada dimensión. Ya habiendo observado la contribución acumulativa y ahora el gráfico se puede concluir que se puede explicar suficiente varianza utilizando 17 dimensiones ya que se llega al 80% y las demás dimensiones contribuyen con muy poco.
-# Representación de cada dimensión
+
+## Representación de cada dimensión
 ```{r dimensión 1, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 1, top = 15) 
 ```
+
 Las variables de esta dimensión que aportan significativamente a la varianza y están correlacionadas se pueden englobar en lujos o comodidades de un hogar en relación a precio cosas particulares de un hogar. Es decir, entre más calidad o más grande el área, el garaje, remodelación etc, más se aporta a la característica de ser más lujoso.
 
 ```{r dimensión 2, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 2, top = 15) 
 ```
+
 En la segunda dimensión se puede observar que las variables que se encuentran sobre el límite se encuentran relacionadas de alguna manera al tamaño del hogar en base a características de construcción, siendo X2ndFlrSF en tamaño del segundo piso, BedrroomAbv es la cantidad de cuartos, tambien está la variable de área, tamaño del balo, sótano etc. 
 
 ```{r dimensión 3, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 3, top = 15) 
 ```
+
 En está dimensión se encuentran varias variables que contienen información referente a remodelación de varios aspectos de la casa y las otras hacia partes particulares de un hogar, como chimeneas, piscina, baños etc.
 
 ```{r dimensión 4, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 4, top = 15) 
 ```
+
 En la dimensión 4 se puede observar que las variables que se encuentran sobre el límite (en su mayoría) tienen información sobre el sótano y su área (SF) en relación al tipo de clase que se puede encontrar en las casas.
 
 ```{r dimensión 5, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 5, top = 15) 
 ```
+
 En la 5ta dimensión se pueden observar que hay 4 variables que dificilmente se encuentran sobre el límite para ser significativos MiscVal hace referancia a características miscelaneas que no son cubiertas por la información general de la casa, las demás características se pueden unificar por ser "extras" de una casa por lo general, como el tamaño de la cocina, fogatas, pórticos y si estos tienden a existir cuando se notifica una remodelación.
 
 ```{r dimensión 6, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 6, top = 15) 
 ```
+
 Las 9 variables que se encuentran sobre el límite de la dimensión 6 son un poco más variadas, 5 de ellas se pueden relacionar por teenr información sobre el pórtico o deck y su tamaño, tomando en cuenta tambien el tamaño del lote completo. Adicionalmente se encuentran otras como la variable de miscelaneos (el precio neto de features extras), la clase, el tamaño de la cocina y baños medios en el sótano, que de cierta manera también se corelacionan por tamaño de características particulares no escenciales de un hogar.
 
 ```{r dimensión 7, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 7, top = 15)
 ```
+
 En la dimensión 8 se pueden notar 3 variables que sobresalen notablemente sobre las demás que (dificilmente) también se encuentran sobre el límite. el mes y año de venta, relacionado con la presencia de caracterísicas del sótano (medio baño, square feets del sótano) y tamaño de la planta baja. que muestran la tendencia de características particulares en un año y mes particulares.
 
 ```{r dimensión 8, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 8, top = 15)
 ```
+
 En la dimensión 8 se encuentran 8 variables sobre el límite. Las variables como el año, presencia de medios baños, tamaño de la cocina, decks e incluso la remodelación se pueden unificar por la mejora de calidad (overallCond) de un hogar luego de que ha sido remodelada.
 
 ```{r dimensión 9, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 9, top = 15) 
 ```
+
 En este caso, el componente parece estar representado por variables que que aportan a la clase de construcción, como el tipo de pórtico, sótano (en relación con la calidad), piscina, cuartos y área neta de la casa. Adicionalmente se puede relacionar a la representatividad que tiene en los meses que es comprada.
 
 
 ```{r dimensión 10, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 10, top = 15) 
 ```
+
 En la 10ma dimensión tenemos la presencia de variables que representan (en su mayoría) comodidades extras (como en alguno de los componentes anteriores). Tales como una gran área de piscina, tamaño (área) del sótano (por lo tanto presencia de otras características como baño), pórtico (tamaño también) y chimeneas.
 
 ```{r dimensión 11, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 11, top = 15) 
 ```
+
 En esta dimensión hay un variable que tiene gran represantitividad (area en pies del pórtico de 3 estaciones) que generalmente se encuentra en casas grandes, por lo que de cierta manera tenemos otras que aportan al tamaño tales como: área del deck, área del sótano, área de la piscina y miscelaneos (agregan valor)
 
 ```{r dimensión 12, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 12, top = 15)
 ```
+
 En esta dimensión tenemos dos variables que tienen casí la misma contribución, baños medios del sótano y áreas terminadas del sótano (en menor contribución hay baños completos del sótano), por lo que la relación parece ser algo evidente al comienzo, sin embargo luego tenemos mes de venta, pórtico, condición general.
 
 ```{r dimensión 13, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 13, top = 15) 
 ```
+
 En este componente se tienen 6 variables sobre el límite en donde todas, excepto MiscVal hacen referencia al área de diferentes partes del hogar como la planta baja, piscina,diferentes pórticos. Siendo MiscVal el valor de características extras se puede inferir que se debe a que estas casas (mayormente) al tener todas estas variables, tienden a tener presente otras características miscelaneas 
 
 ```{r dimensión 14, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 14, top = 15)
 ```
+
 En el componente 14 se tienen 4 variables que hacen referencia al tamaño del pórtico, sótano, planta baja o pórtico de 3 estaciones. Las otras dos son de clase de construcción y el mes en el que fueron compradas, por lo que puede existir una relación entre el tamaño de características extra que (definitivamente) afecta la lase de construcción y se encuentra relacionada de alguna manera a algún mes en específico en donde hay más probabilidad de ser comprada. 
 
 ```{r dimensión 15, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 15, top = 15) 
 ```
+
 En la 15 dimensión tenemos las variables que hacen alusión a áreas extra del hogar que de estar presentes tienen una relación con la calidad general de la casa.
 
 ```{r dimensión 16, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 16, top = 15) 
 ```
+
 En el componente 16 hay varias variables que se encuentran sobre el límite y por lo tanto dificilmente hay una relación muy particular entre todas, hay variables que describen el área, o el año en el que fue remodelado (mejorando o añadiendo probablemente), por lo que de cierta manera se puede atar con la calidad general de la casa con base en varias características.
 
 ```{r dimensión 17, echo=FALSE}
 fviz_contrib(data, choice = "var", axes = 17, top = 15) 
 ```
+
 En esta última componente podemos ver 6 variables sobre el límite de contribución en donde los que más aportan son las variables del año y el mes que fueron vendidos, por lo que las demás condiciones; baño en e sótano, codición general, área de pórtico de 3 estaciones y área de pórtico abierto. Pueden ser características que tienen más probabilidad de ser llamativas en un año en particular o mes (como estaciones del año).
 
-# Reglas de Asociación
+## Reglas de Asociación
+
+Se trabajará únicamente con las variables categóricas ya que para trabajar con las cuantitativas se necesitaría discretizar los datos, para lo que es necesario saber en qué rango deberían encontrarse los valores. Para esto, las variables se convertirán primero en factores y luego ya que determinará la cantidad de reglas de asociación con 0.2 de soporte y 0.7 de confianza para tener tanto un soporte como un nivel de confianza manejables y no tan estrictos.
 
 ```{r formar reglas, echo=FALSE}
 str(datosCasas)
-#reglas<-apriori(datosCasas, parameter = list(support = 0.2,
-                                   #     confidence = 0.70,
-                                  #      target = "rules"))
+datosCasas$MSZoning<-as.factor(datosCasas$MSZoning)
+datosCasas$Street<-as.factor(datosCasas$Street)
+datosCasas$Alley<-as.factor(datosCasas$Alley)
+datosCasas$LotShape<-as.factor(datosCasas$LotShape)
+datosCasas$LandContour<-as.factor(datosCasas$LandContour)
+datosCasas$Utilities<-as.factor(datosCasas$Utilities)
+datosCasas$LotConfig<-as.factor(datosCasas$LotConfig)
+datosCasas$LandSlope<-as.factor(datosCasas$LandSlope)
+datosCasas$Neighborhood<-as.factor(datosCasas$Neighborhood)
+datosCasas$Condition1<-as.factor(datosCasas$Condition1)
+datosCasas$Condition2<-as.factor(datosCasas$Condition2)
+datosCasas$BldgType<-as.factor(datosCasas$BldgType)
+datosCasas$HouseStyle<-as.factor(datosCasas$HouseStyle)
+datosCasas$RoofStyle<-as.factor(datosCasas$RoofStyle)
+datosCasas$RoofMatl<-as.factor(datosCasas$RoofMatl)
+datosCasas$Exterior1st<-as.factor(datosCasas$Exterior1st)
+datosCasas$Exterior2nd<-as.factor(datosCasas$Exterior2nd)
+datosCasas$MasVnrType<-as.factor(datosCasas$MasVnrType)
+datosCasas$ExterQual<-as.factor(datosCasas$ExterQual)
+datosCasas$ExterCond-as.factor(datosCasas$ExterCond)
+datosCasas$Foundation<-as.factor(datosCasas$Foundation)
+datosCasas$BsmtQual<-as.factor(datosCasas$BsmtQual)
+datosCasas$BsmtCond<-as.factor(datosCasas$BsmtCond)
+datosCasas$BsmtExposure<-as.factor(datosCasas$BsmtExposure)
+datosCasas$BsmtFinType1<-as.factor(datosCasas$BsmtFinType1)
+datosCasas$BsmtFinType2<-as.factor(datosCasas$BsmtFinType2)
+datosCasas$Heating<-as.factor(datosCasas$Heating)
+datosCasas$HeatingQC<-as.factor(datosCasas$HeatingQC)
+datosCasas$CentralAir<-as.factor(datosCasas$CentralAir)
+datosCasas$Electrical<-as.factor(datosCasas$Electrical)
+datosCasas$KitchenQual<-as.factor(datosCasas$KitchenQual)
+datosCasas$Functional<-as.factor(datosCasas$Functional)
+datosCasas$FireplaceQu<-as.factor(datosCasas$FireplaceQu)
+datosCasas$GarageType<-as.factor(datosCasas$GarageType)
+datosCasas$GarageFinish<-as.factor(datosCasas$GarageFinish)
+datosCasas$GarageQual<-as.factor(datosCasas$GarageQual)
+datosCasas$GarageCond<-as.factor(datosCasas$GarageCond)
+datosCasas$PavedDrive<-as.factor(datosCasas$PavedDrive)
+datosCasas$PoolQC<-as.factor(datosCasas$PoolQC)
+datosCasas$Fence<-as.factor(datosCasas$Fence)
+datosCasas$MiscFeature<-as.factor(datosCasas$MiscFeature)
+datosCasas$SaleType<-as.factor(datosCasas$SaleType)
+datosCasas$SaleCondition<-as.factor(datosCasas$SaleCondition)
+datos<-datosCasas[,-c(3,6,7,8,9,10,11,12,13,14,15,16,17,22,23,24,25,26,28,29,30,31,32,33,34,36,40,41,42,43,54,56,58,59,61,64,65,66,73,74,75,79,80)]
+reglas<-apriori(datos, parameter = list(support = 0.2,
+                                        confidence = 0.70,
+                                        target = "rules"))
 ```
 
-# Conclusiones 
+Podemos observar que se han creado 5,019,325 reglas de asociación. Estas logran identificar relaciones raras o imperceptibles a simple vista en nuestro set de datos, y, tomando en cuenta la gran cantidad de datos con los que se cuenta a pesar de haber trabajado únicamente con las variables categóricas, tiene sentido la cantidad de reglas que han sido generadas.
+
+## Conclusiones 
+
+### Análisis exploratorio
+
+kkk
+
+### PCA
+
+El análisis de componentes principales es muy útil al utilizar conjuntos de datos tan amplios como el set de datos de las casas (con 81 variables). Esto permite disminuir significativamente la cantidad de variables a utilizar y por lo tanto la demanda computacional disminuye. Se logró disminuir de 37 variables (númericas) a 17 a través del PCA, la cuál agrupó en dimensiones las variables significativas en cada componente, permitiendo interpretarla en base a sus relaciones específicas, como precio por comodidad, por tamaño, extensiones etc.
+
+### Reglas de asociación
+
+Se han creado 5,019,325 reglas de asociación con las que es posible determinar relaciones entre las variables categóricas de nuestro set de datos que no son posibles de observar a simple vista, esto nos podría ayudar en un futuro a realizar predicciones en el mismo set de datos para determinar el precio de las casas en base a características como el tamaño del lote, la ubicación de la casa, la cantidad de pisos, habitaciones, cocinas y baño, estado del sótano, tamaño de piscina y área verde, por ejemplo.
